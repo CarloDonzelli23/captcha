@@ -4,21 +4,27 @@ import { RedisRepository } from "../repository/redisRepository";
 
 export class CaptchaService {
 
-    // private redisRepository: RedisRepository;
+    private redisRepository: RedisRepository;
 
-    // constructor(redisRepository: RedisRepository) {
-    //     this.redisRepository = redisRepository;
-    // }
+    constructor(redisRepository: RedisRepository) {
+        this.redisRepository = redisRepository;
+    }
 
     async generate() {
         const captcha = new Captcha();
         const captchaId = randomUUID();
 
-        //await this.redisRepository.set(captchaId, captcha.dataURL);
+        await this.redisRepository.set(captchaId, captcha.value);
 
         return {
             captchaDataUrl: captcha.dataURL,
-            captchaId: captchaId
+            captchaId: captchaId,
+            captchaString: captcha.value
         }
+    }
+
+    async verify(captchaId: string, captchaValue: string) {
+        const storedCaptcha = await this.redisRepository.get(captchaId);
+        return captchaValue == storedCaptcha;
     }
 }

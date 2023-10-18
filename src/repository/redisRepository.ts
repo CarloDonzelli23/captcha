@@ -15,6 +15,8 @@ export class RedisRepository {
         this.client.on('error', (err) => {
             console.log('Redis client error', err);
         });
+
+        this.client.connect();
     }
 
     async set(key: string, value: string) {
@@ -29,5 +31,9 @@ export class RedisRepository {
     async clean() {
         //The FLUSHDB command deletes the keys in a redis database
         await this.client.flushDb();
+    }
+
+    async stop() {
+        await this.client.quit();
     }
 }
