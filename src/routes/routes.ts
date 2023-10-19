@@ -6,7 +6,7 @@ export function getRoutes(captchaService: CaptchaService, logger: Logger) {
 
     const plugin: FastifyPluginAsyncTypebox = async function (fastify) {
 
-        const validateReponse = Type.Object({ captchaValue: Type.String(), captchaId: Type.String({ format: 'uuid' }), captchaString: Type.String() });
+        const validateReponse = Type.Object({ captchaValue: Type.String(), captchaId: Type.String({ format: 'uuid' }) });
 
         fastify.get('/generate', {
             schema: {
@@ -16,34 +16,35 @@ export function getRoutes(captchaService: CaptchaService, logger: Logger) {
             }
         }, async () => {
 
-            logger.info('generating captcha...')
+            logger.info('generating captcha...');
 
             const generatedCaptcha = await captchaService.generate();
 
             return {
                 captchaValue: generatedCaptcha.captchaDataUrl,
-                captchaId: generatedCaptcha.captchaId,
-                captchaString: generatedCaptcha.captchaString
+                captchaId: generatedCaptcha.captchaId
             }
         });
 
+        const validateBody = Type.Object({ captchaId: Type.String({ format: 'uuid' }), userInput: Type.String() });
+
         fastify.post('/verify', {
             schema: {
-                body: Type.Object({ captchaId: Type.String({ format: 'uuid' }), userInput: Type.String() })
+                body: validateBody
             }
         }, async (req, res) => {
 
             const captchaId = req.body.captchaId;
             const captchaValue = req.body.userInput;
 
-            logger.info('verifing captcha...')
+            logger.info('verifing captcha...');
 
             const verify = await captchaService.verify(captchaId, captchaValue);
 
             if (verify) {
-                return res.status(200).send();
+                return res.status(200).send({ success: true, message: "valid captcha" });
             } else {
-                return res.status(400).send("Invalid captcha!");
+                return res.status(400).send({ success: false, message: "invalid captcha" });
             }
         });
     }

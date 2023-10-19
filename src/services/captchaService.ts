@@ -19,7 +19,6 @@ export class CaptchaService {
         return {
             captchaDataUrl: captcha.dataURL,
             captchaId: captchaId,
-            captchaString: captcha.value
         }
     }
 
