@@ -6,7 +6,7 @@ export function getRoutes(captchaService: CaptchaService, logger: Logger) {
 
     const plugin: FastifyPluginAsyncTypebox = async function (fastify) {
 
-        const validateReponse = Type.Object({ captchaValue: Type.String(), captchaId: Type.String({ format: 'uuid' }) });
+        const validateReponse = Type.Object({ success: Type.Boolean(), captchaValue: Type.String(), captchaId: Type.String({ format: 'uuid' }) });
 
         fastify.get('/generate', {
             schema: {
@@ -14,16 +14,11 @@ export function getRoutes(captchaService: CaptchaService, logger: Logger) {
                     '2xx': validateReponse
                 }
             }
-        }, async () => {
-
-            logger.info('generating captcha...');
+        }, async (req, res) => {
 
             const generatedCaptcha = await captchaService.generate();
 
-            return {
-                captchaValue: generatedCaptcha.captchaDataUrl,
-                captchaId: generatedCaptcha.captchaId
-            }
+            return res.status(200).send({ success: true, captchaId: generatedCaptcha.captchaId, captchaValue: generatedCaptcha.captchaDataUrl });
         });
 
         const validateBody = Type.Object({ captchaId: Type.String({ format: 'uuid' }), userInput: Type.String() });
@@ -36,8 +31,6 @@ export function getRoutes(captchaService: CaptchaService, logger: Logger) {
 
             const captchaId = req.body.captchaId;
             const captchaValue = req.body.userInput;
-
-            logger.info('verifing captcha...');
 
             const verify = await captchaService.verify(captchaId, captchaValue);
 

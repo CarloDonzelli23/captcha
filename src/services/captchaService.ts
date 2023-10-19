@@ -1,19 +1,20 @@
 import Captcha from "captcha-generator-alphanumeric";
-import { randomUUID } from "crypto";
+import * as crypto from "crypto";
 import { RedisRepository } from "../repository/redisRepository";
 
 export class CaptchaService {
 
     private redisRepository: RedisRepository;
+    private generateUUID: () => string
 
-    constructor(redisRepository: RedisRepository) {
+    constructor(redisRepository: RedisRepository, generateUUID = crypto.randomUUID) {
         this.redisRepository = redisRepository;
+        this.generateUUID = generateUUID;
     }
 
     async generate() {
         const captcha = new Captcha();
-        const captchaId = randomUUID();
-
+        const captchaId = this.generateUUID();
         await this.redisRepository.set(captchaId, captcha.value);
 
         return {
