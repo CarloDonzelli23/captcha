@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      REDIS_CONNECTION_STRING: redis://redisdb:6379
+    depends_on:
+      - redisdb
+
+  redisdb:
+    image: redis:7.2-alpine

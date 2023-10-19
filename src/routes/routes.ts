@@ -10,7 +10,7 @@ export function getRoutes(captchaService: CaptchaService) {
         fastify.get('/generate', {
             schema: {
                 response: {
-                    '2xx': validateReponse
+                    '200': validateReponse
                 }
             }
         }, async (req, res) => {
@@ -39,6 +39,7 @@ export function getRoutes(captchaService: CaptchaService) {
                 return res.status(400).send({ success: false, message: "invalid captcha" });
             }
         });
+
     }
 
     return plugin;

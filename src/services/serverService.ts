@@ -17,7 +17,7 @@ export class ServerService {
 
     async start() {
         try {
-            this.fastify.log.info('starting server on port: ', this.port);
+            this.fastify.log.info('starting server on port:' + this.port);
             await this.fastify.listen({ port: this.port, host: '0.0.0.0' });
         } catch (error) {
             this.fastify.log.error(error);
@@ -27,6 +27,11 @@ export class ServerService {
 
     registerRoutes(plugin: FastifyPluginCallback) {
         this.fastify.register(plugin);
+    }
+
+    addSwagger(fastifySwagger: any, fastifySwaggerUi: any, uiOptions: any) {
+        this.fastify.register(fastifySwagger);
+        this.fastify.register(fastifySwaggerUi, uiOptions);
     }
 
     async stop() {

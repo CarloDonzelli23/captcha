@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  title: Fastify Captcha API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+paths:
+  /generate:
+    get:
+      summary: Generate a captcha.
+      responses:
+        '200':
+          description: Successful captcha generation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the captcha generation was successful.
+                  captchaId:
+                    type: string
+                    format: uuid
+                    description: The unique ID of the generated captcha.
+                  captchaValue:
+                    type: string
+                    description: Data URL representing the generated captcha image.
+  /verify:
+    post:
+      summary: Verify a captcha.
+      requestBody:
+        description: Captcha verification request
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                captchaId:
+                  type: string
+                  format: uuid
+                  description: The unique ID of the captcha to be verified.
+                userInput:
+                  type: string
+                  description: The user's input for the captcha.
+              required:
+                - captchaId
+                - userInput
+      responses:
+        '200':
+          description: Successful captcha verification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the captcha is valid.
+                  message:
+                    type: string
+                    description: Verification result message.
+        '400':
+          description: Invalid captcha
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the captcha is valid.
+                  message:
+                    type: string
+                    description: Verification result message
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the captcha is valid.
+        message:
+          type: string
+          description: Verification result message
