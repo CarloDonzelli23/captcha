@@ -1,25 +1,23 @@
-import Fastify, { FastifyInstance, FastifyPluginCallback } from 'fastify';
+import Fastify, { FastifyPluginCallback } from 'fastify';
 import { Logger } from 'pino';
 
 export class ServerService {
 
-    private fastify: FastifyInstance;
+    private fastify;
     private port: number;
-    private logger: Logger;
 
-    constructor(port: number, logger: Logger) {
+    constructor(port: number, logger: Logger | boolean) {
 
         this.fastify = Fastify({
-            logger: true
+            logger: logger
         });
 
         this.port = port;
-        this.logger = logger;
     }
 
     async start() {
         try {
-            this.logger.info('starting server on port: ', this.port);
+            this.fastify.log.info('starting server on port: ', this.port);
             await this.fastify.listen({ port: this.port, host: '0.0.0.0' });
         } catch (error) {
             this.fastify.log.error(error);
@@ -33,5 +31,9 @@ export class ServerService {
 
     async stop() {
         await this.fastify.close();
+    }
+
+    inject() {
+        return this.fastify.inject();
     }
 }

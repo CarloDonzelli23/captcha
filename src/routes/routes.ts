@@ -1,8 +1,7 @@
 import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox";
 import { CaptchaService } from "../services/captchaService";
-import { Logger } from "pino";
 
-export function getRoutes(captchaService: CaptchaService, logger: Logger) {
+export function getRoutes(captchaService: CaptchaService) {
 
     const plugin: FastifyPluginAsyncTypebox = async function (fastify) {
 
