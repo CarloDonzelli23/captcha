@@ -1,7 +1,9 @@
 import { RedisRepository } from "../src/repository/redisRepository";
+import pino from 'pino';
 
+const logger = pino({ level: 'info' });
 const redisUrl = 'redis://localhost:6379';
-const redisRepository = new RedisRepository(redisUrl);
+const redisRepository = new RedisRepository(redisUrl, logger);
 
 test('integration', async () => {
 

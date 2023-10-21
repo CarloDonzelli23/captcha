@@ -1,11 +1,12 @@
 import { createClient, RedisClientType } from 'redis';
+import { Logger } from 'pino';
 
 export class RedisRepository {
 
     private client: RedisClientType;
     private redisConnectionString: string;
 
-    constructor(redisConnectionString: string) {
+    constructor(redisConnectionString: string, logger: Logger) {
         this.redisConnectionString = redisConnectionString;
 
         this.client = createClient({
@@ -13,7 +14,7 @@ export class RedisRepository {
         });
 
         this.client.on('error', (err) => {
-            console.log('Redis client error', err);
+            logger.info('Redis client error', err);
         });
 
         this.client.connect();

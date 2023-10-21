@@ -10,7 +10,7 @@ import { config } from 'dotenv';
 config();
 
 const logger = pino({ level: 'info' });
-const redisRepository = new RedisRepository(process.env.REDIS_CONNECTION_STRING ?? 'redis://localhost:6379');
+const redisRepository = new RedisRepository(process.env.REDIS_CONNECTION_STRING ?? 'redis://localhost:6379', logger);
 const captchaService = new CaptchaService(redisRepository);
 const server = new ServerService(Number(process.env.SERVER_PORT) || 3000, logger);
 
